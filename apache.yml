@@ -1,0 +1,26 @@
+---
+- hosts: webserver 
+  become: true
+  tasks:
+    - name: Install packages
+      yum: name="httpd" state="present"
+      tags:
+      - install
+    - name: Start Apache server
+      service: name=httpd state=started enabled=true
+      tags:
+      - start
+    - name: Deploy static website
+      copy: src=index.html dest=/var/www/html/
+      tags:
+      - copy
+      notify:
+      - start apache webserver 
+      
+  handlers:
+    - name: start apache webserver
+      service: name=httpd state=started
+      tags:
+      - start 
+     
+     
